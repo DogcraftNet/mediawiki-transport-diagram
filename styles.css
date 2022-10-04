@@ -1,0 +1,67 @@
+/* Transport Diagram styles */
+
+.transport-diagram {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid #aaa;
+    border-radius: 10px;
+    background-color: #E9EDEF;
+	float: right;
+    clear: right;
+    width: 27.5em;
+	font-size: 88%;
+	line-height: 1.5em;
+    padding: 0.5em;
+}
+
+.transport-diagram-title {
+	font-size: 1.5em;
+	margin-bottom: 0.4em;
+	justify-content: center;
+	text-align: center;
+	font-weight: bold;
+}
+
+.track-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+	min-width: 30px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.track img {
+	margin: 0;
+	height: 30px;
+	width: 30px;
+}
+
+.diagram-row {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.station {
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+	width: 34%;
+	overflow: hidden;
+}
+
+.station-left {
+	text-align: right;
+    justify-content: flex-end;
+}
+
+.station-right {
+	text-align: left;
+}
+
+.station > * { 
+	overflow:hidden; 
+	text-overflow:ellipsis; 
+}
