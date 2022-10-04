@@ -12,16 +12,30 @@
 -- 
 -- End license text.
 
--- Module for generating mini diagrams of transport networks
+-- A Module for generating mini diagrams of transport networks
 local p = {}
 local data = ""
 local title = "Transport Diagram"
 local totalTracks = 1
 
+-- Extract the first internal link from a string and return its target page
+local function findLink(text)
+	text = string.match(text, "%[%[.-%]%]")
+	if text == nil then 
+		return "" 
+	end
+	text = string.gsub(text, "[%[%]]", "")
+	text = mw.text.split(text, "|", true)[1]
+	return text	
+end
+
 -- Generate the HTML for a diagram row
 local function generateRow(tracks, trackTypes, leftStation, rightStation)
     -- Create the row HTML
     local lineHtml = "<div class='diagram-row'>"
+    
+    -- Get a station link if present
+    local stationLink = findLink("" .. leftStation .. rightStation)
 
     -- Add the left station text
     lineHtml = lineHtml .. "<div class='station station-left'>" .. leftStation .. "</div>"
@@ -33,13 +47,18 @@ local function generateRow(tracks, trackTypes, leftStation, rightStation)
     -- Add the track images
     for trackIndex = 1, totalTracks do
         if tracks[trackIndex] ~= nil then
+            -- If station or interchange, set targetPage to stationLink
+            local targetPage = ""
+            local trackCodeStart = string.sub(tracks[trackIndex], 1, 3)
+    		targetPage = (trackCodeStart == "STN" or trackCodeStart == "ITC") and stationLink or ""
+            
             -- Add the track
             lineHtml = lineHtml ..
                 "<div class='track'>[[File:TIcon " ..
-                trackTypes[trackIndex] .. " " .. tracks[trackIndex] .. ".png]]</div>"
+                trackTypes[trackIndex] .. " " .. tracks[trackIndex] .. ".png|link=" .. targetPage .. "]]</div>"
         else
             -- Add a blank track if there isn't a track for this index
-            lineHtml = lineHtml .. "<div class='track'>[[File:TIcon Blank.png]]</div>"
+            lineHtml = lineHtml .. "<div class='track'>[[File:TIcon Blank.png|link=]]</div>"
         end
     end
     lineHtml = lineHtml .. "</div>"
@@ -60,7 +79,7 @@ local function parseLine(line)
     -- Trim the line of whitespace
     line = mw.text.trim(line)
 
-    -- Split the line into equals-sign separated key-pairs by commas
+    -- Split the line into colon separated key-pairs by commas
     local pairs = mw.text.split(line, ",", true)
     for i = 1, #pairs do
         -- Get the value
@@ -120,7 +139,7 @@ local function generate()
     for _, line in ipairs(lines) do
         output = output .. parseLine(line)
     end
-    return "<div class='transport-diagram'><div class='transport-diagram-title'>" ..
+    return "<div class='transport-diagram phonefullscreen'><div class='transport-diagram-title'>" ..
         title .. "</div>" .. output .. "</div>"
 end
 
